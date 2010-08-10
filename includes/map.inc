@@ -1,5 +1,5 @@
 <?php
-// $Id: map.inc,v 1.1.2.4 2010/06/16 19:40:22 mikeryan Exp $
+// $Id: map.inc,v 1.1.2.5 2010/08/04 02:08:10 mikeryan Exp $
 
 /**
  * @file
@@ -95,9 +95,9 @@ abstract class MigrateMap implements Iterator {
   abstract public function deleteBulk(array $source_keys);
 
   /**
-   * Clear all non-information messages from the map.
+   * Clear all messages from the map.
    */
-  abstract public function clearErrors();
+  abstract public function clearMessages();
 
   /**
    * Retrieve map data for a given source or destination item

@@ -1,5 +1,5 @@
 <?php
-// $Id: sqlmap.inc,v 1.1.2.4 2010/06/16 19:40:23 mikeryan Exp $
+// $Id: sqlmap.inc,v 1.1.2.5 2010/08/04 02:08:10 mikeryan Exp $
 
 /**
  * @file
@@ -56,7 +56,7 @@ class MigrateSQLMap extends MigrateMap {
     $this->messageTable = 'migrate_message_' . drupal_strtolower($machine_name);
     $this->sourceKey = $source_key;
     $this->destinationKey = $destination_key;
-    $this->connection = Database::getConnection($connection_key);
+    $this->connection = Database::getConnection('default', $connection_key);
     // Build the source and destination key maps
     $this->sourceKeyMap = array();
     $count = 1;
@@ -385,7 +385,7 @@ class MigrateSQLMap extends MigrateMap {
    * previously-migrated content will also be updated in place.
    */
   public function prepareUpdate() {
-    $this->connection->update($this->mapTable)
+    $this->connection->update($this->mapTableName)
     ->fields(array('needs_update' => 1))
     ->execute();
   }
@@ -485,11 +485,10 @@ class MigrateSQLMap extends MigrateMap {
   }
 
   /**
-   * Clear non-informational messages from the message table.
+   * Clear all messages from the message table.
    */
-  public function clearErrors() {
-    $this->connection->delete($this->messageTable)
-                     ->condition('level', MigrationBase::MESSAGE_INFORMATIONAL, '<>')
+  public function clearMessages() {
+    $this->connection->truncate($this->messageTable)
                      ->execute();
   }
 

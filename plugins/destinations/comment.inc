@@ -1,5 +1,5 @@
 <?php
-// $Id: comment.inc,v 1.1.2.19 2010/07/03 16:56:41 mikeryan Exp $
+// $Id: comment.inc,v 1.1.2.20 2010/08/04 02:08:10 mikeryan Exp $
 
 /**
  * @file
@@ -112,14 +112,14 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
 
     // Set some default properties.
     $comment = (array) $comment;
-    $comment += array(
+    $comment = array(
       'language' => $this->language,
       'node_type' => $this->bundle,
       'subject' => '',
       'uid' => 0,
       'cid' => 0,
       'pid' => 0,
-    );
+    ) + $comment;
     $comment = (object) $comment;
 
     $this->prepare($migration, $comment, $row);
