@@ -1,5 +1,5 @@
 <?php
-// $Id: base.inc,v 1.1.2.16 2010/07/03 16:56:41 mikeryan Exp $
+// $Id: base.inc,v 1.1.2.17 2010/08/10 13:46:02 mikeryan Exp $
 
 /**
  * @file
@@ -384,15 +384,17 @@ abstract class MigrationBase {
   }
 
   /**
-   * Save the highwater mark for this migration.
+   * Save the highwater mark for this migration (but not when using an idlist).
    *
    * @param mixed $highwater
    */
   protected function saveHighwater($highwater) {
-    db_update('migrate_status')
-    ->fields(array('highwater' => $highwater))
-    ->condition('machine_name', $this->machineName)
-    ->execute();
+    if (!isset($this->options['idlist'])) {
+      db_update('migrate_status')
+      ->fields(array('highwater' => $highwater))
+      ->condition('machine_name', $this->machineName)
+      ->execute();
+    }
   }
 
   /**

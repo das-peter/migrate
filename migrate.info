@@ -32,10 +32,3 @@ files[] = tests/plugins/destinations/node.test
 files[] = tests/plugins/destinations/term.test
 files[] = tests/plugins/destinations/user.test
 files[] = tests/plugins/sources/xml.test
-
-; Information added by drupal.org packaging script on 2010-08-04
-version = "7.x-2.x-dev"
-core = "7.x"
-project = "migrate"
-datestamp = "1280923991"
-

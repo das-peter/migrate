@@ -1,5 +1,5 @@
 <?php
-// $Id: sqlmap.inc,v 1.1.2.5 2010/08/04 02:08:10 mikeryan Exp $
+// $Id: sqlmap.inc,v 1.1.2.6 2010/08/10 13:46:02 mikeryan Exp $
 
 /**
  * @file
@@ -385,7 +385,7 @@ class MigrateSQLMap extends MigrateMap {
    * previously-migrated content will also be updated in place.
    */
   public function prepareUpdate() {
-    $this->connection->update($this->mapTableName)
+    $this->connection->update($this->mapTable)
     ->fields(array('needs_update' => 1))
     ->execute();
   }
