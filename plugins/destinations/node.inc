@@ -62,6 +62,13 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
       $fields['title'] = t('Node:') . ' ' . $node_type->title_label;
     }
 
+    //Load fields added by field management
+    $fieldableFields = field_info_instances($this->entityType, $this->bundle);
+    foreach($fieldableFields as $fieldName=>$fieldDefinition){
+      $fieldInfo = field_info_field($fieldName);
+      $fields[$fieldName] = $fieldDefinition['label'] . ':' . $fieldDefinition['description'];
+    }
+    
     // Then add in anything provided by handlers
     $fields += migrate_handler_invoke_all('Node', 'fields', $this->entityType, $this->bundle);
 
