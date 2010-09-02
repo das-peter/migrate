@@ -32,7 +32,7 @@ function migrate_schema_status() {
       ),
       'lastimported' => array(
         'type' => 'datetime',
-		'mysql_type' => 'DATETIME',
+        'mysql_type' => 'DATETIME',
         'pgsql_type' => 'timestamp without time zone',
         'not null' => FALSE,
         'description' => 'Date and time of last completed import',

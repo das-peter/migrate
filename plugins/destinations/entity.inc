@@ -1,5 +1,5 @@
 <?php
-// $Id: entity.inc,v 1.1.2.26 2010/06/02 14:43:45 mikeryan Exp $
+// $Id: entity.inc,v 1.1.2.27 2010/08/29 19:04:31 mikeryan Exp $
 
 /**
  * @file
@@ -126,6 +126,10 @@ abstract class MigrateDestinationEntity extends MigrateDestination {
     migrate_handler_invoke_all('Entity', 'complete', $migration, $entity, $source_row);
     // Then call any entity-specific handlers
     migrate_handler_invoke_all($this->entityType, 'complete', $migration, $entity, $source_row);
+    // Then call any complete handler for this specific Migration.
+    if (method_exists($migration, 'complete')) {
+      $migration->complete($entity, $source_row);
+    }
   }
 
 }
