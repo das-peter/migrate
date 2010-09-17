@@ -1,5 +1,5 @@
 <?php
-// $Id: user.inc,v 1.1.2.21 2010/07/03 16:56:41 mikeryan Exp $
+// $Id: user.inc,v 1.1.2.22 2010/09/06 21:28:41 mikeryan Exp $
 
 /**
  * @file
@@ -93,9 +93,23 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
    *  successful. FALSE on failure.
    */
   public function import(Migration $migration, stdClass $account, stdClass $row) {
-    // Handle update case
+    // Updating previously-migrated content?
     if (isset($row->migrate_map_destid1)) {
       $account->uid = $row->migrate_map_destid1;
+      if (isset($account->uid)) {
+        if ($account->uid != $row->migrate_map_destid1) {
+          throw new MigrateException(t("Incoming uid !uid and map destination uid !destid1 don't match",
+            array('!uid' => $account->uid, '!destid1' => $row->migrate_map_destid1)));
+        }
+      }
+      else {
+        $account->uid = $row->migrate_map_destid1;
+      }
+    }
+    if ($migration->getSystemOfRecord() == Migration::DESTINATION) {
+      if (!isset($account->uid)) {
+        throw new MigrateException(t('System-of-record is DESTINATION, but no destination uid provided'));
+      }
     }
 
     $this->prepare($migration, $account, $row);

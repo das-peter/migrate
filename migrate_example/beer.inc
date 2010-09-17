@@ -1,5 +1,5 @@
 <?php
-// $Id: beer.inc,v 1.1.2.34 2010/06/09 21:20:01 mikeryan Exp $
+// $Id: beer.inc,v 1.1.2.35 2010/09/04 19:07:18 mikeryan Exp $
 
 /**
  * @file
@@ -191,7 +191,8 @@ class BeerUserMigration extends BasicExampleMigration {
          ->description('See prepare method');
     // We set the timezone here for efficiency - it will be used in the prepare
     // method
-    date_default_timezone_set('US/Mountain');
+    // TODO: Don't set site timezone, affects lastupdatetime
+//    date_default_timezone_set('US/Mountain');
 
     $this->addFieldMapping('mail', 'mail');
     $this->addFieldMapping('pass', 'password');

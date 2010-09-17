@@ -1,5 +1,5 @@
 <?php
-// $Id: migration.inc,v 1.1.2.120 2010/08/29 19:04:31 mikeryan Exp $
+// $Id: migration.inc,v 1.1.2.123 2010/09/12 19:40:38 mikeryan Exp $
 
 /**
  * @file
@@ -254,7 +254,7 @@ abstract class Migration extends MigrationBase {
       $sourceids = array();
       $batch_count = 0;
       foreach ($this->map as $destination_key) {
-        if ($this->checkStatus() != MigrationBase::RESULT_COMPLETED) {
+        if (($return = $this->checkStatus()) != MigrationBase::RESULT_COMPLETED) {
           break;
         }
 
@@ -313,7 +313,7 @@ abstract class Migration extends MigrationBase {
     }
     else {
       foreach ($this->map as $destination_key) {
-        if ($this->checkStatus() != MigrationBase::RESULT_COMPLETED) {
+        if (($return = $this->checkStatus()) != MigrationBase::RESULT_COMPLETED) {
           break;
         }
         if ($itemlimit && ($this->total_processed >= $itemlimit)) {
@@ -364,7 +364,7 @@ abstract class Migration extends MigrationBase {
     $return = MigrationBase::RESULT_COMPLETED;
 
     foreach ($this->source as $data_row) {
-      if ($this->checkStatus() != MigrationBase::RESULT_COMPLETED) {
+      if (($return = $this->checkStatus()) != MigrationBase::RESULT_COMPLETED) {
         break;
       }
 
@@ -373,6 +373,9 @@ abstract class Migration extends MigrationBase {
       $this->values = $this->applyMappings($data_row);
 
       try {
+        // Wipe old messages
+        $this->map->delete($this->currentSourceKey, TRUE);
+
         migrate_instrument_start('destination import', TRUE);
         $ids = $this->destination->import($this, $this->values, $data_row);
         migrate_instrument_stop('destination import');
@@ -652,6 +655,13 @@ abstract class Migration extends MigrationBase {
             }
           }
         }
+
+        // When we're updating existing nodes, if there is a source mapping but there
+        // was no value for this row, add a null destination value so it gets removed
+        // from the node
+        if ($this->systemOfRecord == Migration::DESTINATION && $source && !isset($values->$destination)) {
+          $values->$destination = NULL;
+        }
       }
     }
 
@@ -735,5 +745,15 @@ abstract class Migration extends MigrationBase {
    */
   public function saveMessage($message, $level = MigrationBase::MESSAGE_ERROR) {
     $output = $this->map->saveMessage($this->currentSourceKey, $message, $level);
+  }
+
+  /**
+   * Set the specified row to be updated, if it exists.
+   */
+  public function setUpdate(array $source_key = NULL) {
+    if (!$source_key) {
+      $source_key = $this->currentSourceKey;
+    }
+    $this->map->setUpdate($source_key);
   }
 }

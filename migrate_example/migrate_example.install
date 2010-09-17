@@ -1,5 +1,5 @@
 <?php
-// $Id: migrate_example.install,v 1.1.2.12 2010/06/14 13:48:25 mikeryan Exp $
+// $Id: migrate_example.install,v 1.1.2.14 2010/09/04 20:05:34 mikeryan Exp $
 
 /**
  * @file
@@ -46,4 +46,33 @@ function migrate_example_uninstall() {
       break;
     }
   }
+}
+
+/**
+ * Convert modificationdate datetime field to modificationdatetime int field.
+ */
+function migrate_example_update_7001() {
+  $ret = array();
+  db_add_field('migrate_example_beer_legacy_urls', 'modificationdatetime', array(
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE,
+    )
+  );
+
+  $result = db_select('migrate_example_beer_legacy_urls', 'ms')
+            ->fields('ms', array('machine_name', 'modificationdate'))
+            ->execute();
+  foreach ($result as $row) {
+    $modificationdatetime = strtotime($row->modificationdate);
+    db_update('migrate_example_beer_legacy_urls')
+      ->fields(array('modificationdatetime' => $modificationdatetime))
+      ->condition('machine_name', $row->machineName)
+      ->execute();
+  }
+
+  db_drop_field('migrate_example_beer_legacy_urls', 'modificationdate');
+
+  $ret[] = t('Converted modificationdate datetime field to modificationdatetime int field');
+  return $ret;
 }

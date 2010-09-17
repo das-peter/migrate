@@ -1,5 +1,5 @@
 <?php
-// $Id: example.table_copy.inc,v 1.1.2.1 2010/05/18 15:32:26 weitzman Exp $
+// $Id: example.table_copy.inc,v 1.1.2.2 2010/09/04 19:07:18 mikeryan Exp $
 
 /**
  * @file
@@ -12,7 +12,7 @@ class LegacyURLsMigration extends Migration {
     $this->dependencies = array();
     $this->description = '<p>Copy legacy urls table from as an example of table_copy plugin.</p>';
     $this->team[] = new MigrateTeamMember('Moshe Weitzman', 'weitzman@tejasa.com', 'Implementors');
-    $this->highwaterField = 'modificationdate';
+    $this->highwaterField = 'modificationdatetime';
 
     $query = db_select('migrate_example_legacy_urls', 'lu')->fields('lu');
     $this->source = new MigrateSourceSQL($query, array(

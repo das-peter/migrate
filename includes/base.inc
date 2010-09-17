@@ -1,5 +1,5 @@
 <?php
-// $Id: base.inc,v 1.1.2.18 2010/08/29 19:04:31 mikeryan Exp $
+// $Id: base.inc,v 1.1.2.20 2010/09/12 19:40:38 mikeryan Exp $
 
 /**
  * @file
@@ -275,7 +275,7 @@ abstract class MigrationBase {
    *  Optional message severity (defaults to MESSAGE_ERROR).
    */
   public function saveMessage($message, $level = MigrationBase::MESSAGE_ERROR) {
-    showMessage($message, $level);
+    $this->showMessage($message, $level);
   }
 
   /**
@@ -373,10 +373,16 @@ abstract class MigrationBase {
    */
   public function getLastImported() {
     $last_imported = db_select('migrate_status', 'ms')
-              ->fields('ms', array('lastimported'))
+              ->fields('ms', array('lastimportedtime'))
               ->condition('machine_name', $this->machineName)
               ->execute()
               ->fetchField();
+    if ($last_imported) {
+      $last_imported = date('Y-m-d H:i:s', $last_imported);
+    }
+    else {
+      $last_imported = '';
+    }
     return $last_imported;
   }
 
@@ -500,7 +506,7 @@ abstract class MigrationBase {
       $this->status = MigrationBase::STATUS_IDLE;
       $fields = array('status' => MigrationBase::STATUS_IDLE);
       if ($overallThroughput) {
-        $fields['lastimported'] = gmdate('Y-m-d H:i:s');
+        $fields['lastimportedtime'] = time();
         $fields['lastthroughput'] = $overallThroughput;
       }
       db_merge('migrate_status')
