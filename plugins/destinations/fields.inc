@@ -61,7 +61,7 @@ abstract class MigrateFieldHandler extends MigrateHandler {
    */
   function getFieldLanguage(Migration $migration, stdClass $entity, $field_info) {
     switch (TRUE) {
-      case !isset($field_info['translatable']) || !$field_info['translatable']:
+      case !field_is_translatable($migration->getDestination()->getEntityType(), $field_info):
           return LANGUAGE_NONE;
       case isset($arguments['language']):
         return $arguments['language'];
