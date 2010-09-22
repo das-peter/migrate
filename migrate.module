@@ -565,9 +565,11 @@ function migrate_field_attach_delete($entity_type, $entity) {
         $destination_keys[$key] = $entity->{$key};
       }
       $source_ids = $migration->getMap()->lookupSourceID($destination_keys);
-      foreach ($source_ids as $source_id) {
-        // TODO A method to delete depending on destination ID's would be nice :)
-        $migration->getMap()->delete(array($source_id));
+      if (is_array($source_ids)) {
+        foreach ($source_ids as $source_id) {
+          // TODO A method to delete depending on destination ID's would be nice :)
+          $migration->getMap()->delete(array($source_id));
+        }
       }
     }
   }
