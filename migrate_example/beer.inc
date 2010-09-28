@@ -1,5 +1,5 @@
 <?php
-// $Id: beer.inc,v 1.1.2.35 2010/09/04 19:07:18 mikeryan Exp $
+// $Id: beer.inc,v 1.1.2.36 2010/09/27 19:47:40 mikeryan Exp $
 
 /**
  * @file
@@ -291,7 +291,7 @@ class BeerNodeMigration extends BasicExampleMigration {
     $count_query = db_select('migrate_example_beer_node', 'b');
     $count_query->addExpression('COUNT(bid)', 'cnt');
 
-    $this->source = new MigrateSourceSQL($this, $query, $count_query);
+    $this->source = new MigrateSourceSQL($this, $query, array(), $count_query);
 
     // Set up our destination - nodes of type migrate_example_beer
     $this->destination = new MigrateDestinationNode('migrate_example_beer');

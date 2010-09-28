@@ -1,5 +1,5 @@
 <?php
-// $Id: sql.inc,v 1.1.2.19 2010/08/29 19:04:31 mikeryan Exp $
+// $Id: sql.inc,v 1.1.2.22 2010/09/27 19:47:40 mikeryan Exp $
 
 /**
  * @file
@@ -33,6 +33,13 @@ class MigrateSourceSQL extends MigrateSource {
   protected $numProcessed = 0;
 
   /**
+   * List of available source fields.
+   *
+   * @var array
+   */
+  protected $fields = array();
+
+  /**
    * If the map is a MigrateSQLMap, and the table is compatible with the
    * source query, we can join directly to the map and make things much faster
    * and simpler.
@@ -43,11 +50,26 @@ class MigrateSourceSQL extends MigrateSource {
 
   /**
    * Simple initialization.
+   *
+   * @param Migration $migration
+   *  The calling migration - we may need to call back to it.
+   * @param SelectQuery $query
+   *  The query we are iterating over.
+   * @param array $fields
+   *  Optional - keys are field names, values are descriptions. Use to override
+   *  the default descriptions, or to add additional source fields which the
+   *  migration will add via other means (e.g., prepareRow()).
+   * @param SelectQuery $count_query
+   *  Optional - an explicit count query, primarily used when counting the
+   *  primary query is slow.
+   * @param boolean $map_joinable
+   *  Indicates whether the map table can be joined directly to the source query.
    */
   public function __construct(Migration $migration, SelectQuery $query,
-      SelectQuery $count_query = NULL, $map_joinable = NULL) {
+      array $fields = array(), SelectQuery $count_query = NULL, $map_joinable = NULL) {
     parent::__construct($migration);
     $this->query = $query;
+    $this->fields = $fields;
     if (is_null($count_query)) {
       $this->countQuery = clone $query->countQuery();
     }
@@ -110,9 +132,9 @@ class MigrateSourceSQL extends MigrateSource {
   public function fields() {
     $fields = array();
     $queryFields = $this->query->getFields();
+
     if ($queryFields) {
       // Not much we can do in terms of describing the fields without manual intervention
-      // TODO: Mechanism for migration developers to document source fields
       foreach ($queryFields as $field_name => $field_info) {
         // Lower case, because Drupal forces lowercase on fetch
         $fields[drupal_strtolower($field_name)] = drupal_strtolower(
@@ -145,6 +167,12 @@ class MigrateSourceSQL extends MigrateSource {
     foreach ($expressionFields as $field_name => $field_info) {
       // Lower case, because Drupal forces lowercase on fetch
       $fields[drupal_strtolower($field_name)] = drupal_strtolower($field_info['alias']);
+    }
+
+    // Any caller-specified fields with the same names as extracted fields will
+    // override them; any others will be added
+    if ($this->fields) {
+      $fields = $this->fields + $fields;
     }
 
     return $fields;
@@ -258,9 +286,6 @@ class MigrateSourceSQL extends MigrateSource {
     $map = $this->migration->getMap();
     // TODO: Apply idlist etc. for non-joinable case
     while ($this->currentRow = $this->result->fetchObject()) {
-      if (!is_object($this->currentRow)) {
-        break;
-      }
       foreach ($map->getSourceKey() as $field_name => $field_schema) {
         $this->currentKey[$field_name] = $this->currentRow->$field_name;
       }
@@ -278,8 +303,20 @@ class MigrateSourceSQL extends MigrateSource {
           }
         }
       }
-      $this->numProcessed++;
-      break;
+
+      // Allow the Migration to prepare this row. prepareRow() must return a
+      // boolean TRUE for this row to get processed. To add/modify fields on the
+      // result, pass $row by reference.
+      if (method_exists($this->migration, 'prepareRow')) {
+        $success = $this->migration->prepareRow($this->currentRow);
+      }
+      else {
+        $success = TRUE;
+      }
+      if ($success) {
+        $this->numProcessed++;
+        break;
+      }
     }
     if (!is_object($this->currentRow)) {
       $this->currentRow = NULL;

@@ -1,5 +1,5 @@
 <?php
-// $Id: xml.inc,v 1.1.2.4 2010/08/04 02:08:10 mikeryan Exp $
+// $Id: xml.inc,v 1.1.2.5 2010/09/27 20:10:15 mikeryan Exp $
 
 /**
  * @file
@@ -12,7 +12,7 @@
  * to import, and the IDs are then used to construct URLs for obtaining specific
  * source objects.
  */
-abstract class MigrateXMLSource extends MigrateSource {
+abstract class MigrateSourceXML extends MigrateSource {
   /**
    * The URL from which to obtain XML data.
    *
