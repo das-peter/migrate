@@ -1,5 +1,5 @@
 <?php
-// $Id: view.inc,v 1.1.2.2 2010/06/02 19:26:56 mikeryan Exp $
+// $Id: view.inc,v 1.1.2.3 2010/10/09 17:34:33 mikeryan Exp $
 
 /**
  * @file
@@ -15,9 +15,9 @@
 class MigrateSourceView extends MigrateSourceSQL {
   protected $viewName;
 
-  public function __construct($migration, $view_name) {
+  public function __construct($view_name) {
     $this->viewName = $view_name;
     // TODO: Derive the query from the view
-    parent::__construct($migration, $query);
+    parent::__construct($query);
   }
 }

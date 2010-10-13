@@ -1,5 +1,5 @@
 <?php
-// $Id: xml.inc,v 1.1.2.6 2010/10/01 19:44:58 mikeryan Exp $
+// $Id: xml.inc,v 1.1.2.7 2010/10/09 17:34:33 mikeryan Exp $
 
 /**
  * @file
@@ -47,12 +47,12 @@ class MigrateListXML extends MigrateList {
       return $this->getIDsFromXML($xml);
     }
     else {
-      // TODO: How to handle errors?
-/*      $this->migration->showMessage(t('Loading of !listurl failed:',
+      $migration = Migration::currentMigration();
+      $migration->showMessage(t('Loading of !listurl failed:',
           array('!listurl' => $this->listUrl)));
       foreach (libxml_get_errors() as $error) {
-        $this->migration->showMessage($error);
-      }*/
+        $migration->showMessage($error);
+      }
       return NULL;
     }
   }
@@ -126,14 +126,14 @@ class MigrateItemXML extends MigrateItem {
       return $return;
     }
     else {
-      // TODO: How to handle errors?
-/*      $message =  t('Loading of !objecturl failed:', array('!objecturl' => $object_url));
+      $migration = Migration::currentMigration();
+      $message =  t('Loading of !objecturl failed:', array('!objecturl' => $object_url));
       foreach (libxml_get_errors() as $error) {
         $message .= "\n" . $error->message;
       }
-      $this->migration->getMap()->saveMessage(
+      $migration->getMap()->saveMessage(
         array($this->id), $message, MigrationBase::MESSAGE_ERROR);
-      libxml_clear_errors();*/
+      libxml_clear_errors();
       return NULL;
     }
   }

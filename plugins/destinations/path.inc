@@ -1,5 +1,5 @@
 <?php
-// $Id: path.inc,v 1.1.2.4 2010/07/03 16:56:41 mikeryan Exp $
+// $Id: path.inc,v 1.1.2.5 2010/10/09 17:34:33 mikeryan Exp $
 
 /**
  * @file
@@ -15,7 +15,7 @@ class MigratePathEntityHandler extends MigrateDestinationHandler {
     return array('path' => t('Node: Path alias'));
   }
 
-  public function prepare(Migration $migration, stdClass $entity, stdClass $row) {
+  public function prepare(stdClass $entity, stdClass $row) {
     if (isset($entity->path)) {
       $path = $entity->path;
       $entity->path = array();

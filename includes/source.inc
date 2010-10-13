@@ -1,5 +1,5 @@
 <?php
-// $Id: source.inc,v 1.1.2.8 2010/06/16 19:40:22 mikeryan Exp $
+// $Id: source.inc,v 1.1.2.9 2010/10/09 17:34:33 mikeryan Exp $
 
 /**
  * @file
@@ -14,12 +14,6 @@
  * MigrateSourceSQL for an example.
  */
 abstract class MigrateSource implements Iterator {
-  /**
-   * The Migration object using this source.
-   * @var Migration
-   */
-  protected $migration;
-
   /**
    * The current row from the quey
    *
@@ -60,14 +54,7 @@ abstract class MigrateSource implements Iterator {
    */
   abstract public function count($refresh = FALSE);
 
-   /**
-   * Simply save the migration.
-   *
-   * @param Migration $migration
-   */
-  public function __construct(Migration $migration) {
-    $this->migration = $migration;
-  }
+  public function __construct() {}
 
   /**
    * Default implementations of Iterator methods - many derivations will find
