@@ -1,5 +1,5 @@
 <?php
-// $Id: migrate.drush.inc,v 1.1.2.28.2.48 2010/08/29 19:04:30 mikeryan Exp $
+// $Id: migrate.drush.inc,v 1.1.2.28.2.49 2010/10/14 13:59:27 weitzman Exp $
 
 /**
  * @file
@@ -26,7 +26,7 @@ function migrate_drush_help($section) {
     case 'drush:migrate-fields-source':
       return dt('List the fields available for mapping from a source');
     case 'drush:migrate-descriptions':
-      return db('View descriptions for a migration and all its mappings');
+      return dt('View descriptions for a migration and all its mappings');
     case 'drush:migrate-wipe':
       return dt('Delete all nodes from specified content types.');
   }

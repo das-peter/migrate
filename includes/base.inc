@@ -1,5 +1,5 @@
 <?php
-// $Id: base.inc,v 1.1.2.20 2010/09/12 19:40:38 mikeryan Exp $
+// $Id: base.inc,v 1.1.2.21 2010/10/14 14:00:48 weitzman Exp $
 
 /**
  * @file
@@ -691,7 +691,7 @@ abstract class MigrationBase {
     }
 
     // Does it look like it's already a timestamp? Just return it
-    if (is_numeric($value) && $value > -1) {
+    if (is_numeric($value)) {
       return $value;
     }
 
@@ -699,13 +699,10 @@ abstract class MigrationBase {
     $value = str_replace('-', '/', $value);
 
     $time = strtotime($value);
-    if ($time < 0 || !$time) {
+    if ($time == FALSE) {
       // Handles form YYYY-MM-DD HH:MM:SS.garbage
       if (drupal_strlen($value) > 19) {
         $time = strtotime(drupal_substr($value, 0, 19));
-        if ($time < 0 || !$time) {
-          return -1;
-        }
       }
     }
     return $time;
