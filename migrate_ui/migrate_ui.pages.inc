@@ -1,5 +1,5 @@
 <?php
-// $Id: migrate_ui.pages.inc,v 1.1.2.40 2010/06/04 01:55:57 mikeryan Exp $
+// $Id$
 
 /**
  * @file

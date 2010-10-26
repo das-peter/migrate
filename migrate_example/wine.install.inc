@@ -1,5 +1,5 @@
 <?php
-// $Id: wine.install.inc,v 1.1.2.9 2010/09/27 19:24:10 mikeryan Exp $
+// $Id$
 
 /**
  * @file

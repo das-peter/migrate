@@ -1,5 +1,5 @@
 <?php
-// $Id: migration.inc,v 1.1.2.124 2010/10/09 17:34:33 mikeryan Exp $
+// $Id$
 
 /**
  * @file

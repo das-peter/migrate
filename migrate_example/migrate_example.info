@@ -1,4 +1,4 @@
-; $Id: migrate_example.info,v 1.1.2.7 2010/06/09 21:20:01 mikeryan Exp $
+; $Id$
 name = "Migrate Example"
 description = "Example migration data."
 package = "Development"

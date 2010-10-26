@@ -1,5 +1,5 @@
 <?php
-// $Id: user.test,v 1.1.2.9 2010/09/06 21:28:41 mikeryan Exp $
+// $Id$
 
 /**
  * Test user migration.

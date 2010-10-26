@@ -1,5 +1,5 @@
 <?php
-// $Id: example.table_copy.inc,v 1.1.2.2 2010/09/04 19:07:18 mikeryan Exp $
+// $Id$
 
 /**
  * @file

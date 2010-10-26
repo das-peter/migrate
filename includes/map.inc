@@ -1,5 +1,5 @@
 <?php
-// $Id: map.inc,v 1.1.2.5 2010/08/04 02:08:10 mikeryan Exp $
+// $Id$
 
 /**
  * @file

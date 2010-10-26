@@ -1,4 +1,4 @@
-; $Id: migrate_ui.info,v 1.1.2.3 2010/02/23 20:00:26 mikeryan Exp $
+; $Id$
 name = "Migrate UI"
 description = "UI for managing migration processes"
 package = "Development"

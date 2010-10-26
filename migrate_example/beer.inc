@@ -1,5 +1,5 @@
 <?php
-// $Id: beer.inc,v 1.1.2.37 2010/10/09 17:34:33 mikeryan Exp $
+// $Id$
 
 /**
  * @file

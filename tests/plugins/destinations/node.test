@@ -1,5 +1,5 @@
 <?php
-// $Id: node.test,v 1.1.2.11 2010/09/30 15:06:58 mikeryan Exp $
+// $Id$
 
 /**
  * Test node migration.

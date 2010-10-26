@@ -1,5 +1,5 @@
 <?php
-// $Id: migrate.drush.inc,v 1.1.2.28.2.49 2010/10/14 13:59:27 weitzman Exp $
+// $Id$
 
 /**
  * @file

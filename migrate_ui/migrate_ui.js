@@ -1,4 +1,4 @@
-// $Id: migrate_ui.js,v 1.1.2.10 2010/04/09 19:41:37 weitzman Exp $
+// $Id$
 (function ($) {
 
 /**

@@ -1,5 +1,5 @@
 <?php
-// $Id: field_mapping.inc,v 1.1.2.3 2010/05/26 16:02:40 mikeryan Exp $
+// $Id$
 
 /**
  * @file

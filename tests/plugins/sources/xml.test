@@ -1,5 +1,5 @@
 <?php
-// $Id: xml.test,v 1.1.2.1 2010/06/16 19:40:23 mikeryan Exp $
+// $Id$
 
 /**
  * Test node migration.

@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.1.2.5.2.2 2010/04/21 22:20:57 mikeryan Exp $
+$Id$
 
 The Migrate module provides a flexible framework for migrating content into Drupal from other
 sources (e.g., when converting a web site from another CMS to Drupal). Out-of-the-box, support 

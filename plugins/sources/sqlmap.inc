@@ -1,5 +1,5 @@
 <?php
-// $Id: sqlmap.inc,v 1.1.2.7 2010/09/12 19:40:38 mikeryan Exp $
+// $Id$
 
 /**
  * @file

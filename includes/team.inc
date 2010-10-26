@@ -1,5 +1,5 @@
 <?php
-// $Id: team.inc,v 1.1.2.3 2010/05/26 02:33:56 mikeryan Exp $
+// $Id$
 
 /**
  * @file
