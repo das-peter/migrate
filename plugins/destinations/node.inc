@@ -174,15 +174,35 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
     node_save($node);
     migrate_instrument_stop('node_save');
 
-    // Unfortunately, http://drupal.org/node/722688 was not accepted, so fix
-    // the changed timestamp here
-    if (isset($changed) && isset($node->nid)) {
-      db_update('node')
-        ->fields(array('changed' => $changed))
-        ->condition('nid', $node->nid)
-        ->execute();
-      $node->changed = $changed;
+    if (isset($node->nid)) {
+      
+      // Unfortunately, http://drupal.org/node/722688 was not accepted, so fix
+      // the changed timestamp
+      if (isset($changed)) {
+        db_update('node')
+          ->fields(array('changed' => $changed))
+          ->condition('nid', $node->nid)
+          ->execute();
+        $node->changed = $changed;
+      }
+      
+      // Potentially fix uid and timestamp in node_revisions.
+      $query = db_update('node_revision')
+                 ->condition('vid', $node->vid);
+      if (isset($changed)) {
+        $fields['timestamp'] = $changed;
+      }
+      if ($node->uid != $GLOBALS['user']->uid) {
+        $fields['uid'] = $node->uid;
+      }
+      if (!empty($fields)) {
+        // We actually have something to update.
+        $query->fields($fields);
+        $query->execute();
+        $node->timestamp = $changed;
+      }
     }
+        
     $this->complete($node, $row);
     $return = isset($node->nid) ? array($node->nid) : FALSE;
     return $return;
