@@ -176,8 +176,6 @@ function migrate_migration_info($form, $form_state, $migration) {
 
   $has_mappings = method_exists($migration, 'getFieldMappings');
 
-  $form = array();
-
   if ($has_mappings) {
     $field_mappings = $migration->getFieldMappings();
     // Identify what destination and source fields are mapped
