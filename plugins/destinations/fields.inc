@@ -330,10 +330,10 @@ class MigrateFileFieldHandler extends MigrateFieldHandler {
     if ($file) {
       // Build up a return object.
       $object_field['fid'] = $file->fid;
-      $object_field['alt'] = isset($arguments['source_alt_name']) ? $values[$arguments['source_alt_name']] : NULL;
-      $object_field['title'] = isset($arguments['source_title_name']) ? $values[$arguments['source_title_name']] : NULL;
-      $object_field['description'] = isset($arguments['source_description_name']) ? $values[$arguments['source_description_name']] : NULL;
-      $object_field['display'] = isset($arguments['source_display_name']) ? $values[$arguments['source_display_name']] : NULL;
+      $object_field['alt'] = isset($arguments['source_alt_name']) ? $arguments['source_alt_name'] : NULL;
+      $object_field['title'] = isset($arguments['source_title_name']) ? $arguments['source_title_name'] : NULL;
+      $object_field['description'] = isset($arguments['source_description_name']) ? $arguments['source_description_name'] : NULL;
+      $object_field['display'] = isset($arguments['source_display_name']) ? $arguments['source_display_name'] : NULL;
       $return[$language][$delta] = $object_field;
       return $return;
     }
