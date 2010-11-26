@@ -173,14 +173,15 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
     }
     else {
       // Get the vocabulary for this term
-      $vid = $field_info['settings']['allowed_values'][0]['vid'];
+      $machine_name = $field_info['settings']['allowed_values'][0]['vocabulary'];
 
       // Cannot use taxonomy_term_load_multiple() since we have an array of names.
       // It wants a singular value.
-      $tids = db_select('taxonomy_term_data', 'td')
-        ->fields('td', array('tid'))
-        ->condition('td.name', $values, 'IN')
-        ->condition('td.vid', $vid)
+      $query = db_select('taxonomy_vocabulary', 'tv')
+        ->fields('td', array('tid'));
+      $query->leftJoin('taxonomy_term_data', 'td', 'tv.vid = td.vid');
+      $tids = $query->condition('td.name', $values, 'IN')
+        ->condition('tv.machine_name', $machine_name)
         ->execute()
         ->fetchAllKeyed(0, 0);
     }
