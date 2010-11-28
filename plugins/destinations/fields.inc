@@ -173,7 +173,7 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
     }
     else {
       // Get the vocabulary for this term
-      $machine_name = $field_info['settings']['allowed_values'][0]['vocabulary'];
+      $machine_name = $instance['settings']['allowed_values'][0]['vocabulary'];
 
       // Cannot use taxonomy_term_load_multiple() since we have an array of names.
       // It wants a singular value.
