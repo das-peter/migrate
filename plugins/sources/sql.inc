@@ -314,7 +314,7 @@ class MigrateSourceSQL extends MigrateSource {
         }
       }
     }
-$migration->messages[] = (string)$this->query;
+
     migrate_instrument_start('MigrateSourceSQL execute');
     $this->result = $this->query->execute();
     migrate_instrument_stop('MigrateSourceSQL execute');
