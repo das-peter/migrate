@@ -8,7 +8,7 @@
 
 class MigrateFieldsEntityHandler extends MigrateDestinationHandler {
   public function __construct() {
-    $this->registerTypes(array('entity'));
+    $this->registerTypes(array('entity', 'node', 'user', 'comment', 'taxonomy_term'));
   }
 
   public function fields($entity_type, $bundle) {
@@ -213,6 +213,7 @@ class MigrateFileFieldHandler extends MigrateFieldHandler {
 
     $destination_dir = $field_info['settings']['uri_scheme'] . '://' .
       $instance['settings']['file_directory'];
+    file_prepare_directory($destination_dir, FILE_CREATE_DIRECTORY);
     $destination_file = file_stream_wrapper_uri_normalize($destination_dir . "/" . basename($full_path));
     $real_destination_file = drupal_realpath($destination_file);
 
@@ -256,7 +257,7 @@ class MigrateFileFieldHandler extends MigrateFieldHandler {
           break;
         case 'file_move':
           // file_move() does a copy then delete which slow. So we implement our own.
-          if (file_prepare_directory($destination_dir)) {
+          if (file_prepare_directory($destination_dir, FILE_CREATE_DIRECTORY)) {
             if (rename($source->uri, $real_destination_file)) {
               $file = clone $source;
               $file->fid = NULL;
