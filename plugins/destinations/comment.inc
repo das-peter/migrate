@@ -71,6 +71,7 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
     $fields['language'] = t('Comment: Language');
 
     // Then add in anything provided by handlers
+    $fields += migrate_handler_invoke_all('Entity', 'fields', $this->entityType, $this->bundle);
     $fields += migrate_handler_invoke_all('Comment', 'fields', $this->entityType, $this->bundle);
 
     return $fields;
@@ -223,5 +224,17 @@ class MigrateDestinationComment extends MigrateDestinationEntity {
         ->from($query)
         ->execute();
     }
+  }
+}
+
+class MigrateCommentNodeHandler extends MigrateDestinationHandler {
+  public function __construct() {
+    $this->registerTypes(array('node'));
+  }
+
+  public function fields($entity_type, $bundle) {
+    $fields = array();
+    $fields['comment'] = t('Whether comments may be posted to the node');
+    return $fields;
   }
 }

@@ -8,7 +8,7 @@
 
 class MigrateFieldsEntityHandler extends MigrateDestinationHandler {
   public function __construct() {
-    $this->registerTypes(array('entity', 'user', 'comment', 'taxonomy_term'));
+    $this->registerTypes(array('entity'));
   }
 
   public function fields($entity_type, $bundle) {
@@ -171,9 +171,11 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
       // Nothing to do. We have tids already.
       $tids = $values;
     }
-    else {
+    elseif ($values) {
       // Get the vocabulary for this term
-      $machine_name = $instance['settings']['allowed_values'][0]['vocabulary'];
+      $name = $field_info['settings']['allowed_values'][0]['vocabulary'];
+      $names = taxonomy_vocabulary_get_names();
+      $vid = $names[$name]->vid;
 
       // Cannot use taxonomy_term_load_multiple() since we have an array of names.
       // It wants a singular value.
@@ -184,6 +186,9 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
         ->condition('tv.machine_name', $machine_name)
         ->execute()
         ->fetchAllKeyed(0, 0);
+    }
+    else {
+      $tids = array();
     }
     $language = $this->getFieldLanguage($entity, $field_info, $arguments);
     $result = array();
