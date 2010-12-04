@@ -183,7 +183,7 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
         ->fields('td', array('tid'));
       $query->leftJoin('taxonomy_term_data', 'td', 'tv.vid = td.vid');
       $tids = $query->condition('td.name', $values, 'IN')
-        ->condition('tv.machine_name', $machine_name)
+        ->condition('tv.vid', $vid)
         ->execute()
         ->fetchAllKeyed(0, 0);
     }
