@@ -179,11 +179,10 @@ class MigrateTaxonomyTermReferenceFieldHandler extends MigrateFieldHandler {
 
       // Cannot use taxonomy_term_load_multiple() since we have an array of names.
       // It wants a singular value.
-      $query = db_select('taxonomy_vocabulary', 'tv')
-        ->fields('td', array('tid'));
-      $query->leftJoin('taxonomy_term_data', 'td', 'tv.vid = td.vid');
-      $tids = $query->condition('td.name', $values, 'IN')
-        ->condition('tv.vid', $vid)
+      $tids = db_select('taxonomy_term_data', 'td')
+        ->fields('td', array('tid'))
+        ->condition('td.name', $values, 'IN')
+        ->condition('td.vid', $vid)
         ->execute()
         ->fetchAllKeyed(0, 0);
     }
@@ -335,10 +334,10 @@ class MigrateFileFieldHandler extends MigrateFieldHandler {
     if ($file) {
       // Build up a return object.
       $object_field['fid'] = $file->fid;
-      $object_field['alt'] = isset($arguments['source_alt_name']) ? $arguments['source_alt_name'] : NULL;
-      $object_field['title'] = isset($arguments['source_title_name']) ? $arguments['source_title_name'] : NULL;
-      $object_field['description'] = isset($arguments['source_description_name']) ? $arguments['source_description_name'] : NULL;
-      $object_field['display'] = isset($arguments['source_display_name']) ? $arguments['source_display_name'] : NULL;
+      $object_field['alt'] = isset($arguments['source_alt_name']) ? $values[$arguments['source_alt_name']] : NULL;
+      $object_field['title'] = isset($arguments['source_title_name']) ? $values[$arguments['source_title_name']] : NULL;
+      $object_field['description'] = isset($arguments['source_description_name']) ? $values[$arguments['source_description_name']] : NULL;
+      $object_field['display'] = isset($arguments['source_display_name']) ? $values[$arguments['source_display_name']] : NULL;
       $return[$language][$delta] = $object_field;
       return $return;
     }
