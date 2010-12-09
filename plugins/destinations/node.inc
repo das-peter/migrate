@@ -171,6 +171,11 @@ class MigrateDestinationNode extends MigrateDestinationEntity {
       }
     }
 
+    // If menu is present make sure it is preserved
+    if (!empty($node->menu['mlid'])) {
+      $node->menu['enabled'] = TRUE;
+    }
+
     // Invoke migration prepare handlers
     $this->prepare($node, $row);
     $node->revision = 0; // Always create a new revision.
