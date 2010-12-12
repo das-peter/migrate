@@ -504,7 +504,7 @@ function drush_migrate_get_migrations($args) {
   else {
     $named_migrations = array();
     foreach (explode(',', $args) as $name) {
-      $migration = $migration_objects[$name];
+      $migration = $migration_objects[$name . 'Migration'];
       if ($migration->getEnabled()) {
         $named_migrations[$name] = $migration;
       }
