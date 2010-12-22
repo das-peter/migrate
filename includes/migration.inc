@@ -117,8 +117,8 @@ abstract class Migration extends MigrationBase {
   /**
    * General initialization of a Migration object.
    */
-  public function __construct(array $arguments = array()) {
-    parent::__construct($arguments);
+  public function __construct() {
+    parent::__construct();
   }
 
   /**
@@ -651,12 +651,6 @@ abstract class Migration extends MigrationBase {
         if ($source_migration && isset($values->$destination)) {
           $values->$destination = $this->handleSourceMigration($source_migration, $values->$destination, $default);
         }
-        
-        // If specified, assure a unique value for this property.
-        $dedupe = $mapping->getDedupe();
-        if ($dedupe && isset($values->$destination)) {
-          $values->$destination = $this->handlededupe($dedupe, $values->$destination, $mapping);
-        }
 
         // If specified, assure a unique value for this property.
         $dedupe = $mapping->getDedupe();
@@ -746,30 +740,6 @@ abstract class Migration extends MigrationBase {
     else {
       return $results[0];
     }
-  }
-  
-  /**
-   * Assign a non-existing value for current mapping.
-   */
-  protected function handleDedupe($dedupe, $original, $mapping) {
-    $sql = "SELECT 1 FROM {%s} WHERE %s='%s'";
-    $i = 1;
-    $candidate = $original;
-    while ($count = db_result(db_query_range($sql, $dedupe['table'], $dedupe['column'], $candidate, 0, 1))) {
-      // We already have the candidate value. Find a non-existing value.
-      $i++;
-      // @TODO: support custom replacement pattern instead of just append.
-      $candidate = $original . '_' . $i;
-    }
-    if ($i > 1) {
-      $message = t('Replacing !column !original with !candidate',
-                 array('!column' => $dedupe['column'],
-                       '!original' => $original,
-                       '!candidate' => $candidate));
-      $migration = Migration::currentMigration();
-      $migration->saveMessage($message, Migration::MESSAGE_INFORMATIONAL);
-    }
-    return $candidate;
   }
 
   /**

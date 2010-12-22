@@ -83,10 +83,6 @@ function migrate_migrations() {
   return $migrations;
 }
 
-function migrate_exception_error_handler($errno, $errstr, $errfile, $errline ) {
-  throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-}
-
 /**
  * On cache clear, scan the Drupal code registry for any new migration classes
  * for us to register in migrate_status.
@@ -263,14 +259,7 @@ function _migrate_class_list($parent_class, array $existing = array()) {
         // silently ignore - it is up to the implementor of such a class to
         // instantiate it in hook_migrations_alter().
         try {
-          // If the constructor has required parameters, this may fail. We will
-          // silently ignore - it is up to the implementor of such a class to
-          // instantiate it in hook_migrations_alter().
-          try {
-            $object = new $record->name;
-          }
-          catch (Exception $e) {
-          }
+          $object = new $record->name;
         }
         catch (Exception $e) {
           unset($object);
