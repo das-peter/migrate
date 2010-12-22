@@ -47,6 +47,13 @@ function migrate_example_beer_uninstall() {
   migrate_example_beer_content_type_delete();
 }
 
+function migrate_example_beer_disable() {
+  Migration::deregisterMigration('BeerTerm');
+  Migration::deregisterMigration('BeerUser');
+  Migration::deregisterMigration('BeerNode');
+  Migration::deregisterMigration('BeerComment');
+}
+
 function migrate_example_beer_schema_node() {
   return array(
     'description' => 'Beers of the world.',
@@ -577,12 +584,15 @@ function migrate_example_beer_data_node() {
   $query->execute();
 }
 
+// Note that alice has duplicate username. Exercies dedupe() method.
+// @TODO duplicate email also.
 function migrate_example_beer_data_account() {
   $fields = array('status', 'posted', 'name', 'nickname', 'password', 'mail', 'sex', 'beers');
   $query = db_insert('migrate_example_beer_account')
     ->fields($fields);
   $data = array(
     array(1, '2010-03-30 10:31:05', 'alice', 'alice hot pants', 'alicepass', 'alice@example.com', '1', '99999999|99999998|99999997'),
+    array(1, '2010-04-04 10:31:05', 'alice', 'alice dupe pants', 'alicepass', 'alice2@example.com', '1', '99999999|99999998|99999997'),
     array(0, '2007-03-15 10:31:05', 'bob', 'rebob', 'bobpass', 'bob@example.com', '1', '99999999|99999997'),
     array(1, '2004-02-29 10:31:05', 'charlie', 'charlie chocolate', 'mykids', 'charlie@example.com', '0', '99999999|99999998'),
   );

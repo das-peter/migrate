@@ -121,6 +121,28 @@ abstract class Migration extends MigrationBase {
     parent::__construct();
   }
 
+  /**
+   * Deregister a migration - remove all traces of it from the database (without
+   * touching any content which was created by this migration).
+   *
+   * We'd like to do this at uninstall time, but the implementing module is
+   * already disabled, so we can't instantiate it to get at the map. This can
+   * be done in hook_disable(), however.
+   *
+   * @param string $machine_name
+   */
+  static public function deregisterMigration($machine_name) {
+    // Remove map and message tables
+    $migration = self::getInstance($machine_name);
+    $migration->map->destroy();
+
+    // TODO: Clear log entries? Or keep for historical purposes?
+
+    // Call the parent deregistration (which clears migrate_status) last, the
+    // above will reference it.
+    parent::deregisterMigration($machine_name);
+  }
+
   ////////////////////////////////////////////////////////////////////
   // Processing
 
@@ -581,6 +603,9 @@ abstract class Migration extends MigrationBase {
     if ($this->memoryExceeded()) {
       return MigrationBase::RESULT_INCOMPLETE;
     }
+    if ($this->timeExceeded()) {
+      return MigrationBase::RESULT_INCOMPLETE;
+    }
     if ($this->getStatus() == Migration::STATUS_STOPPING) {
       return MigrationBase::RESULT_STOPPED;
     }
@@ -625,6 +650,12 @@ abstract class Migration extends MigrationBase {
         $source_migration = $mapping->getSourceMigration();
         if ($source_migration && isset($values->$destination)) {
           $values->$destination = $this->handleSourceMigration($source_migration, $values->$destination, $default);
+        }
+
+        // If specified, assure a unique value for this property.
+        $dedupe = $mapping->getDedupe();
+        if ($dedupe && isset($values->$destination)) {
+          $values->$destination = $this->handleDedupe($dedupe, $values->$destination, $mapping);
         }
 
         // Assign any arguments
@@ -712,6 +743,30 @@ abstract class Migration extends MigrationBase {
   }
 
   /**
+   * Assign a non-existing value for current mapping.
+   */
+  protected function handleDedupe($dedupe, $original, $mapping) {
+    $sql = "SELECT 1 FROM {%s} WHERE %s='%s'";
+    $i = 1;
+    $candidate = $original;
+    while ($count = db_result(db_query_range($sql, $dedupe['table'], $dedupe['column'], $candidate, 0, 1))) {
+      // We already have the candidate value. Find a non-existing value.
+      $i++;
+      // @TODO: support custom replacement pattern instead of just append.
+      $candidate = $original . '_' . $i;
+    }
+    if ($i > 1) {
+      $message = t('Replacing !column !original with !candidate',
+                 array('!column' => $dedupe['column'],
+                       '!original' => $original,
+                       '!candidate' => $candidate));
+      $migration = Migration::currentMigration();
+      $migration->saveMessage($message, Migration::MESSAGE_INFORMATIONAL);
+    }
+    return $candidate;
+  }
+
+  /**
    * If stub creation is enabled, try to create a stub and save the mapping.
    */
   protected function createStubWrapper(array $source_key) {
@@ -754,5 +809,20 @@ abstract class Migration extends MigrationBase {
       $source_key = $this->currentSourceKey;
     }
     $this->map->setUpdate($source_key);
+  }
+}
+
+/**
+ * Convenience class - deriving from this rather than directory from Migration
+ * ensures that a class will not be registered as a migration itself - it is
+ * the implementor's responsibility to register each instance of a dynamic
+ * migration class.
+ */
+abstract class DynamicMigration extends Migration {
+  /**
+   * Overrides default of FALSE
+   */
+  static public function isDynamic() {
+    return TRUE;
   }
 }

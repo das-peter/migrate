@@ -26,10 +26,25 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
   }
 
   /**
-   * Basic initialization
+   * Return an options array for user destinations.
+   *
+   * @param string $language
+   *  Default language for usrs created via this destination class.
+   * @param string $text_format
+   *  Default text format for users created via this destination class.
    */
-  public function __construct($language = NULL, $text_format = NULL) {
-    parent::__construct('user', 'user', $language, $text_format);
+  static public function options($language, $text_format) {
+    return compact('language', 'text_format');
+  }
+
+  /**
+   * Basic initialization
+   *
+   * @param array $options
+   *  Options applied to comments.
+   */
+  public function __construct(array $options = array()) {
+    parent::__construct('user', 'user', $options);
   }
 
   /**
@@ -93,7 +108,6 @@ class MigrateDestinationUser extends MigrateDestinationEntity {
     $migration = Migration::currentMigration();
     // Updating previously-migrated content?
     if (isset($row->migrate_map_destid1)) {
-      $account->uid = $row->migrate_map_destid1;
       if (isset($account->uid)) {
         if ($account->uid != $row->migrate_map_destid1) {
           throw new MigrateException(t("Incoming uid !uid and map destination uid !destid1 don't match",
