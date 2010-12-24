@@ -112,8 +112,8 @@ function migrate_flush_caches() {
 
   foreach ($result as $record) {
     $class_name = $record->name;
-    // If we already know about this class, skip it
-    if (isset($existing_classes[$class_name])) {
+    // If we already know about this class or it's a TestClass, skip it
+    if (isset($existing_classes[$class_name]) || substr($class_name, -4) == 'Test') {
       continue;
     }
 
@@ -246,6 +246,10 @@ function _migrate_class_list($parent_class, array $existing = array()) {
               ->execute();
 
     foreach ($result as $record) {
+      // If it's a Test Class, skip it.
+      if (substr($record->name, -4) == 'Test') {
+        continue;
+      }
       // Validate it's an implemented subclass of the parent class
       // We can get funky errors here, ignore them (and the class that caused them)
       try {
