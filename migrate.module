@@ -105,15 +105,16 @@ function migrate_flush_caches() {
 
   // Discover class names registered with Drupal by modules implementing our API
   $result = db_select('registry', 'r')
-            ->fields('r', array('name', 'filename'))
+            ->fields('r', array('name'))
             ->condition('type', 'class')
             ->condition('module', $modules, 'IN')
+            ->condition('filename', '%.test', 'NOT LIKE')
             ->execute();
 
   foreach ($result as $record) {
     $class_name = $record->name;
-    // If we already know about this class or it's a TestClass, skip it
-    if (isset($existing_classes[$class_name]) || pathinfo($record->filename, PATHINFO_EXTENSION) == 'test') {
+    // If we already know about this class, skip it
+    if (isset($existing_classes[$class_name])) {
       continue;
     }
 
@@ -127,11 +128,8 @@ function migrate_flush_caches() {
     }
     if (!$class->isAbstract() && $class->isSubclassOf('MigrationBase')) {
       // Verify that it's not a dynamic class (the implementor will be responsible
-      // for registering those). Note that in PHP 5.2 static methods can't be
-      // invoked using a variable - because it's a syntax error, we can't even
-      // use version_compare() to use the clean method on PHP_VERSION >= 5.3,
-      // so we have to use the hack in all cases.
-      eval("\$dynamic = $class_name::isDynamic();");
+      // for registering those).
+      $dynamic = call_user_func(array($class_name,'isDynamic'));
       if (!$dynamic) {
         // OK, this is a new non-dynamic migration class, register it
         MigrationBase::registerMigration($class_name);
@@ -243,6 +241,7 @@ function _migrate_class_list($parent_class, array $existing = array()) {
               ->fields('r', array('name', 'filename'))
               ->condition('type', 'class')
               ->condition('module', $modules, 'IN')
+              ->condition('filename', '%.test', 'NOT LIKE')
               ->execute();
 
     foreach ($result as $record) {
