@@ -286,6 +286,11 @@ abstract class Migration extends MigrationBase {
   protected function rollback() {
     $return = MigrationBase::RESULT_COMPLETED;
     $itemlimit = $this->getOption('itemlimit');
+    $idlist = $this->getOption('idlist');
+    if ($idlist) {
+      // Make the IDs keys, to more easily identify them
+      $idlist = array_flip(explode(',', $idlist));
+    }
 
     if (method_exists($this->destination, 'bulkRollback')) {
       // Too many at once can lead to memory issues, so batch 'em up
@@ -301,6 +306,11 @@ abstract class Migration extends MigrationBase {
           break;
         }
         $this->currentSourceKey = $this->map->getCurrentKey();
+
+        // If there's an idlist, skip anything not in the list
+        if ($idlist && !isset($idlist[$this->currentSourceKey['sourceid1']])) {
+          continue;
+        }
 
         // Note that bulk rollback is only supported for single-column keys
         $sourceids[] = $this->currentSourceKey;
@@ -359,6 +369,11 @@ abstract class Migration extends MigrationBase {
           break;
         }
         $this->currentSourceKey = $this->map->getCurrentKey();
+
+        // If there's an idlist, skip anything not in the list
+        if ($idlist && !isset($idlist[$this->currentSourceKey['sourceid1']])) {
+          continue;
+        }
 
         // Rollback one record
         try {
@@ -785,10 +800,14 @@ abstract class Migration extends MigrationBase {
    * Assign a non-existing value for current mapping.
    */
   protected function handleDedupe($dedupe, $original, $mapping) {
-    $sql = "SELECT 1 FROM {%s} WHERE %s='%s'";
     $i = 1;
     $candidate = $original;
-    while ($count = db_result(db_query_range($sql, $dedupe['table'], $dedupe['column'], $candidate, 0, 1))) {
+    while ($candidate_found = db_select($dedupe['table'], 't')
+                      ->fields('t', array($dedupe['column']))
+                      ->range(0, 1)
+                      ->condition('t.' . $dedupe['column'], $candidate)
+                      ->execute()
+                      ->fetchField()) {
       // We already have the candidate value. Find a non-existing value.
       $i++;
       // @TODO: support custom replacement pattern instead of just append.
